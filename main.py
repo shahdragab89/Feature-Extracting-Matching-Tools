@@ -1,7 +1,6 @@
 from PyQt5 import QtWidgets
 from PyQt5.uic import loadUiType
 import sys
-from worker import Worker
 
 # Load the UI file
 ui, _ = loadUiType("Ui3.ui")

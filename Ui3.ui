@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1550</width>
-    <height>873</height>
+    <height>913</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -139,6 +139,12 @@ border : 2px solid #D1D5DB; </string>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="1" column="0">
            <widget class="QLabel" name="inputImage1">
+            <property name="maximumSize">
+             <size>
+              <width>650</width>
+              <height>700</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -187,7 +193,13 @@ font-size: 14px;</string>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="inputImag2">
+           <widget class="QLabel" name="inputImage2">
+            <property name="maximumSize">
+             <size>
+              <width>650</width>
+              <height>375</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true"/>
             </property>
@@ -324,11 +336,11 @@ border : 2px solid #D1D5DB; </string>
             <property name="styleSheet">
              <string notr="true">color: rgb(0, 0, 0);
 font-weight: bold;
-font-size: 14px;
-border : 2px solid #FFFFFF; </string>
+font-size: 16px;
+border : none;</string>
             </property>
             <property name="text">
-             <string>control Settings</string>
+             <string>                         Control Settings</string>
             </property>
            </widget>
           </item>
@@ -370,6 +382,9 @@ font-size: 16px;
                <property name="text">
                 <string>Harris Option</string>
                </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item>
@@ -394,7 +409,7 @@ font-size: 16px;
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame">
+              <widget class="QFrame" name="matching_frame">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -517,7 +532,7 @@ QPushButton:pressed {
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="harrisption_frame">
+              <widget class="QFrame" name="harrisOption_frame">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -531,11 +546,11 @@ QPushButton:pressed {
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_3">
-                <item>
+                <item alignment="Qt::AlignHCenter">
                  <widget class="QPushButton" name="upload_button">
                   <property name="minimumSize">
                    <size>
-                    <width>60</width>
+                    <width>110</width>
                     <height>28</height>
                    </size>
                   </property>

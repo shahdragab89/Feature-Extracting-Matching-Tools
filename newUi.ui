@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1546</width>
+    <width>1550</width>
     <height>1028</height>
    </rect>
   </property>
@@ -667,7 +667,7 @@ border : 2px solid #D1D5DB; </string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_29">
                  <item>
-                  <widget class="QLabel" name="label_2">
+                  <widget class="QLabel" name="file_list_label">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -688,7 +688,7 @@ font-size: 14px;</string>
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QListWidget" name="listWidget"/>
+               <widget class="QListWidget" name="file_list"/>
               </item>
              </layout>
             </widget>
@@ -729,17 +729,17 @@ border : 2px solid #D1D5DB; </string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_6">
                  <item>
-                  <widget class="QTabWidget" name="tabWidget_2">
+                  <widget class="QTabWidget" name="tabs">
                    <property name="currentIndex">
-                    <number>0</number>
+                    <number>1</number>
                    </property>
-                   <widget class="QWidget" name="tab_3">
+                   <widget class="QWidget" name="original_image_tab">
                     <attribute name="title">
                      <string>Original Image</string>
                     </attribute>
                     <layout class="QHBoxLayout" name="horizontalLayout_4">
                      <item>
-                      <widget class="QLabel" name="label_6">
+                      <widget class="QLabel" name="original_image_label">
                        <property name="text">
                         <string/>
                        </property>
@@ -747,25 +747,19 @@ border : 2px solid #D1D5DB; </string>
                      </item>
                     </layout>
                    </widget>
-                   <widget class="QWidget" name="tab_4">
+                   <widget class="QWidget" name="harris_tab">
                     <attribute name="title">
                      <string>Harris Corners</string>
                     </attribute>
                     <layout class="QHBoxLayout" name="horizontalLayout_5">
                      <item>
-                      <widget class="QLabel" name="label_7">
+                      <widget class="QLabel" name="harris_image_label">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
                     </layout>
-                   </widget>
-                   <widget class="QWidget" name="tab_5">
-                    <attribute name="title">
-                     <string>λ- Analysis</string>
-                    </attribute>
-                    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
                    </widget>
                   </widget>
                  </item>
@@ -782,7 +776,7 @@ border : 2px solid #D1D5DB; </string>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_7">
                  <item>
-                  <widget class="QLabel" name="label_35">
+                  <widget class="QLabel" name="results_label">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -800,7 +794,7 @@ font-size: 14px;</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QTextEdit" name="textEdit"/>
+                  <widget class="QTextEdit" name="results_text"/>
                  </item>
                 </layout>
                </widget>
@@ -893,7 +887,7 @@ border-radius:10px;</string>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_3">
                     <item>
-                     <widget class="QPushButton" name="upload_button">
+                     <widget class="QPushButton" name="load_button">
                       <property name="minimumSize">
                        <size>
                         <width>110</width>
@@ -968,7 +962,7 @@ QPushButton:pressed {
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_31">
                        <item>
-                        <widget class="QLabel" name="threshold_sliderLabel">
+                        <widget class="QLabel" name="blockSize_Label">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
@@ -995,7 +989,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="radius_spinBox">
+                        <widget class="QSpinBox" name="blockSize_spin">
                          <property name="styleSheet">
                           <string notr="true">QSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
@@ -1062,7 +1056,7 @@ QSpinBox::down-arrow {
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_37">
                        <item>
-                        <widget class="QLabel" name="threshold_sliderLabel_3">
+                        <widget class="QLabel" name="ksize_label">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
@@ -1084,12 +1078,12 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
 </string>
                          </property>
                          <property name="text">
-                          <string>Karnel Size:</string>
+                          <string>Kernel Size:</string>
                          </property>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="radius_spinBox_3">
+                        <widget class="QSpinBox" name="ksize_spin">
                          <property name="styleSheet">
                           <string notr="true">QSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
@@ -1121,7 +1115,7 @@ QSpinBox::up-arrow, QSpinBox::down-arrow {
     image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
 }
 
-QSpinBox::down-arrow {
+QDoubleSpinBox::down-arrow {
     image: url(:/icons/icons8-chevron-up-100.png);
 }
 </string>
@@ -1156,7 +1150,7 @@ QSpinBox::down-arrow {
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_38">
                        <item>
-                        <widget class="QLabel" name="threshold_sliderLabel_2">
+                        <widget class="QLabel" name="k_label">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
@@ -1183,7 +1177,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="radius_spinBox_2">
+                        <widget class="QDoubleSpinBox" name="k_spin">
                          <property name="styleSheet">
                           <string notr="true">QSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
@@ -1250,7 +1244,7 @@ QSpinBox::down-arrow {
                       </property>
                       <layout class="QHBoxLayout" name="horizontalLayout_40">
                        <item>
-                        <widget class="QLabel" name="threshold_sliderLabel_4">
+                        <widget class="QLabel" name="threshold_label">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                            <horstretch>0</horstretch>
@@ -1277,7 +1271,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                         </widget>
                        </item>
                        <item>
-                        <widget class="QSpinBox" name="radius_spinBox_4">
+                        <widget class="QDoubleSpinBox" name="threshold_spin">
                          <property name="styleSheet">
                           <string notr="true">QSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
@@ -1320,112 +1314,7 @@ QSpinBox::down-arrow {
                      </widget>
                     </item>
                     <item>
-                     <widget class="QFrame" name="frame_54">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>60</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>50</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_41">
-                       <item>
-                        <widget class="QLabel" name="threshold_sliderLabel_5">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="font">
-                          <font>
-                           <family>MS Shell Dlg 2</family>
-                           <pointsize>9</pointsize>
-                           <weight>9</weight>
-                           <italic>false</italic>
-                           <bold>false</bold>
-                          </font>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">color: rgb(0, 0, 0);
-font: 75 9pt &quot;MS Shell Dlg 2&quot;;
-</string>
-                         </property>
-                         <property name="text">
-                          <string>Image Type:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QComboBox" name="comboBox">
-                         <property name="styleSheet">
-                          <string notr="true">QComboBox {
-    background-color: #3D61D3;
-    border-radius: 8px;
-    color: white;
-    border: 2px solid #F2F2F2;
-    padding: 5px 10px;
-    font-size: 14px;
-    selection-background-color: #2C4ABF; /* Darker blue when selecting */
-}
-
-/* Dropdown Arrow */
-QComboBox::drop-down {
-    border: none;
-    background: transparent;
-    width: 30px;
-}
-
-QComboBox::down-arrow {
-    image: url(down-arrow.png); /* Replace with an actual icon */
-    width: 12px;
-    height: 12px;
-}
-
-/* Hover and Focus Effects */
-QComboBox:hover {
-    background-color: #2C4ABF; /* Slightly darker blue */
-}
-
-QComboBox:focus {
-    border: 2px solid #A3C5FF; /* Light blue glow effect */
-}
-
-/* Pop-up Menu */
-QComboBox QAbstractItemView {
-    background: white;
-    border-radius: 6px;
-    border: 1px solid #D1D5DB;
-    selection-background-color: #3D61D3;
-    selection-color: white;
-}</string>
-                         </property>
-                         <item>
-                          <property name="text">
-                           <string>color</string>
-                          </property>
-                         </item>
-                        </widget>
-                       </item>
-                      </layout>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="upload_button_2">
+                     <widget class="QPushButton" name="run_button">
                       <property name="minimumSize">
                        <size>
                         <width>140</width>
@@ -1525,7 +1414,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1546</width>
+     <width>1550</width>
      <height>26</height>
     </rect>
    </property>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1550</width>
-    <height>913</height>
+    <height>932</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -546,12 +546,12 @@ QPushButton:pressed {
                 <enum>QFrame::Raised</enum>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_3">
-                <item alignment="Qt::AlignHCenter">
+                <item>
                  <widget class="QPushButton" name="upload_button">
                   <property name="minimumSize">
                    <size>
                     <width>110</width>
-                    <height>28</height>
+                    <height>30</height>
                    </size>
                   </property>
                   <property name="maximumSize">
@@ -598,47 +598,13 @@ QPushButton:pressed {
                  </widget>
                 </item>
                 <item>
-                 <spacer name="verticalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
+                 <widget class="QFrame" name="frame_45">
+                  <property name="minimumSize">
                    <size>
-                    <width>20</width>
-                    <height>40</height>
+                    <width>0</width>
+                    <height>60</height>
                    </size>
                   </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QLabel" name="threshold_sliderLabel">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>MS Shell Dlg 2</family>
-                    <pointsize>9</pointsize>
-                    <weight>9</weight>
-                    <italic>false</italic>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color: rgb(0, 0, 0);
-font: 75 9pt &quot;MS Shell Dlg 2&quot;;
-</string>
-                  </property>
-                  <property name="text">
-                   <string>Threshold</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QFrame" name="frame_45">
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
@@ -656,79 +622,511 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_28">
                    <item>
-                    <widget class="QSlider" name="threshold_slider">
-                     <property name="styleSheet">
-                      <string notr="true">QSlider::groove:horizontal {
-    border: 1px solid #999999; /* Light border */
-    height: 2px;  /* Slim and modern */
-    background: #D1D5DB; /* Light gray track */
-}
-
-QSlider::handle:horizontal {
-    background: #142BAF;  /* Your main color */
-    width: 10px;  /* Small handle */
-    margin: -5px -1px;
-    border-radius: 5px;
-    border: 1px solid #142BAF;
-}
-
-/* The part of the slider that is ahead of the handle */
-QSlider::sub-page:horizontal {
-    background: #142BAF; /* Active track in main color */
-}
-
-/* The part of the slider that is behind the handle */
-QSlider::add-page:horizontal {
-    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #B1B1B1, stop: 1 #C4C4C4);
-}
-
-/* Hover effect for the handle */
-QSlider::handle:horizontal:hover {
-    background: #0F2499;
-    border-color: #0F2499;
-}
-</string>
-                     </property>
-                     <property name="minimum">
-                      <number>1</number>
-                     </property>
-                     <property name="maximum">
-                      <number>15</number>
-                     </property>
-                     <property name="sliderPosition">
-                      <number>1</number>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="threhold_sliderValue">
+                    <widget class="QLabel" name="threshold_sliderLabel">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
-                     <property name="minimumSize">
-                      <size>
-                       <width>30</width>
-                       <height>30</height>
-                      </size>
+                     <property name="font">
+                      <font>
+                       <family>MS Shell Dlg 2</family>
+                       <pointsize>9</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
                      </property>
                      <property name="styleSheet">
-                      <string notr="true">background-color: #4264EC;
-border-radius: 5px;
-color:white;
-padding-left:5px;</string>
+                      <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
                      </property>
                      <property name="text">
-                      <string>1</string>
+                      <string>Block Size:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="radius_spinBox">
+                     <property name="styleSheet">
+                      <string notr="true">QSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QSpinBox::up-arrow, QSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+
+QSpinBox::down-arrow {
+    image: url(:/icons/icons8-chevron-up-100.png);
+}
+</string>
                      </property>
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_47">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_30">
+                   <item>
+                    <widget class="QLabel" name="threshold_sliderLabel_3">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>MS Shell Dlg 2</family>
+                       <pointsize>9</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                     </property>
+                     <property name="text">
+                      <string>Karnel Size:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="radius_spinBox_3">
+                     <property name="styleSheet">
+                      <string notr="true">QSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QSpinBox::up-arrow, QSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+
+QSpinBox::down-arrow {
+    image: url(:/icons/icons8-chevron-up-100.png);
+}
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_46">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_31">
+                   <item>
+                    <widget class="QLabel" name="threshold_sliderLabel_2">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>MS Shell Dlg 2</family>
+                       <pointsize>9</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                     </property>
+                     <property name="text">
+                      <string>K:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="radius_spinBox_2">
+                     <property name="styleSheet">
+                      <string notr="true">QSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QSpinBox::up-arrow, QSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+
+QSpinBox::down-arrow {
+    image: url(:/icons/icons8-chevron-up-100.png);
+}
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_48">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_32">
+                   <item>
+                    <widget class="QLabel" name="threshold_sliderLabel_4">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>MS Shell Dlg 2</family>
+                       <pointsize>9</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                     </property>
+                     <property name="text">
+                      <string>Threshold</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="radius_spinBox_4">
+                     <property name="styleSheet">
+                      <string notr="true">QSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QSpinBox::up-arrow, QSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+
+QSpinBox::down-arrow {
+    image: url(:/icons/icons8-chevron-up-100.png);
+}
+</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_49">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>60</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>50</height>
+                   </size>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_33">
+                   <item>
+                    <widget class="QLabel" name="threshold_sliderLabel_5">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>MS Shell Dlg 2</family>
+                       <pointsize>9</pointsize>
+                       <weight>9</weight>
+                       <italic>false</italic>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                     </property>
+                     <property name="text">
+                      <string>Image Type:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QComboBox" name="comboBox">
+                     <property name="styleSheet">
+                      <string notr="true">QComboBox {
+    background-color: #3D61D3;
+    border-radius: 8px;
+    color: white;
+    border: 2px solid #F2F2F2;
+    padding: 5px 10px;
+    font-size: 14px;
+    selection-background-color: #2C4ABF; /* Darker blue when selecting */
+}
+
+/* Dropdown Arrow */
+QComboBox::drop-down {
+    border: none;
+    background: transparent;
+    width: 30px;
+}
+
+QComboBox::down-arrow {
+    image: url(down-arrow.png); /* Replace with an actual icon */
+    width: 12px;
+    height: 12px;
+}
+
+/* Hover and Focus Effects */
+QComboBox:hover {
+    background-color: #2C4ABF; /* Slightly darker blue */
+}
+
+QComboBox:focus {
+    border: 2px solid #A3C5FF; /* Light blue glow effect */
+}
+
+/* Pop-up Menu */
+QComboBox QAbstractItemView {
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #D1D5DB;
+    selection-background-color: #3D61D3;
+    selection-color: white;
+}</string>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>color</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="upload_button_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>140</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>100</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>MS Shell Dlg 2</family>
+                    <pointsize>-1</pointsize>
+                    <weight>75</weight>
+                    <italic>false</italic>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">QPushButton {
+    background-color: #3D61D3;  /* Same as ComboBox */
+    border-radius: 8px;
+    color: white;
+    border: 2px solid #F2F2F2;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Hover effect */
+QPushButton:hover {
+    background-color: #2C4ABF; /* Slightly darker blue */
+}
+
+/* Pressed effect */
+QPushButton:pressed {
+    background-color: #1F3A93; /* Even darker for press */
+}
+</string>
+                  </property>
+                  <property name="text">
+                   <string>Extract Features</string>
+                  </property>
                  </widget>
                 </item>
                </layout>

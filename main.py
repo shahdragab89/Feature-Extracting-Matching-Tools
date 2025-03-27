@@ -16,6 +16,7 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from harris_feature_extractor import HarrisFeatureExtractor
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from ncc import Normal_Cross_Correlation
 
 # Load the UI file
 ui, _ = loadUiType("newUI.ui")
@@ -24,6 +25,7 @@ class HarrisDetectorApp:
     def __init__(self):
         self.ui = None
         self.feature_extractor = None
+        self.method = None
     
     def run_batch(self, image_dir, output_dir, params):
         print(f"Processing images in batch mode from {image_dir}...")
@@ -55,7 +57,7 @@ class MainApp(QtWidgets.QMainWindow, ui):
         self.normalizedCrossSelection_radioButton.setChecked(True)
         self.handle_radio("Cross Section")
 
-        self.load_button.clicked.connect(self.load_images)
+        self.load_button.clicked.connect(lambda: self.load_images("Harris"))
         self.blockSize_spin.setRange(2, 15)
         self.blockSize_spin.setValue(2)
         self.blockSize_spin.setSingleStep(1)
@@ -76,9 +78,24 @@ class MainApp(QtWidgets.QMainWindow, ui):
         self.run_button.setEnabled(False)
 
         self.file_list.itemClicked.connect(self.display_selected_image)
-
-
         self.original_image_label.setAlignment(Qt.AlignCenter)
+
+
+        # Initialization of Feature Matching
+        self.method = "NCC"
+        self.inputImage1.setScaledContents(True)
+        self.inputImage2.setScaledContents(False)
+
+        # Buttons
+        self.uploadImage1_button.clicked.connect(lambda: self.load_images("Features and Matching", "Input 1"))
+        self.uploadImage2_button.clicked.connect(lambda: self.load_images("Features and Matching", "Input 2"))
+        self.applyMethods_button.clicked.connect(self.applyMethod)
+
+        # Radio buttons
+        self.normalizedCrossSelection_radioButton.clicked.connect(lambda: self.radioButton_process("NCC"))
+        self.sumOfSquareDifference_radioButton.clicked.connect(lambda: self.radioButton_process("SSD"))
+        self.applySIFT_radioButton.clicked.connect(lambda: self.radioButton_process("SIFT"))
+
 
         # In the MainApp class
                 # Tab for Lambda results
@@ -106,7 +123,7 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 self.matching_frame.show()
                 self.inputImage2.show()
 
-    def load_images(self):
+    def load_images(self, page, type):
         file_dialog = QFileDialog()
         image_paths, _ = file_dialog.getOpenFileNames(
             self, "Select Images", "", "Image Files (*.png *.jpg *.jpeg *.bmp *.tif *.tiff)")
@@ -114,19 +131,32 @@ class MainApp(QtWidgets.QMainWindow, ui):
         if not image_paths:
             return
             
-        self.loaded_images = {}
-        self.file_list.clear()
-        
-        for path in image_paths:
-            filename = os.path.basename(path)
-            self.file_list.addItem(filename)
-            self.loaded_images[filename] = path
-        
-        if image_paths:
-            self.run_button.setEnabled(True)
-            # Select the first image
-            self.file_list.setCurrentRow(0)
-            self.display_selected_image(self.file_list.currentItem())
+        # For the Harris Page
+        if page == "Harris":
+            self.loaded_images = {}
+            self.file_list.clear()
+            
+            for path in image_paths:
+                filename = os.path.basename(path)
+                self.file_list.addItem(filename)
+                self.loaded_images[filename] = path
+            
+            if image_paths:
+                self.run_button.setEnabled(True)
+                # Select the first image
+                self.file_list.setCurrentRow(0)
+                self.display_selected_image(self.file_list.currentItem())
+
+        # For feature extraction and Matching tools
+        elif page == "Features and Matching": 
+            if type == "Input 1":
+                self.Image1 = image_paths[0]  # Select first image from the list
+            elif type == "Input 2":
+                self.Image2 = image_paths[0]  # Select first image from the list
+            
+            if self.Image1 or self.Image2:  # Ensure a valid path is set
+                self.display_image(type)
+            
 
     def display_selected_image(self, item):
         if not item:
@@ -242,6 +272,70 @@ class MainApp(QtWidgets.QMainWindow, ui):
         
         # Switch to Harris corners tab
         self.tabs.setCurrentIndex(1)
+
+    def display_image(self, type):
+        if type == "Input 1":
+            image_path = self.Image1  # Ensure it's the correct image path
+            label = self.inputImage1  # QLabel for displaying image
+        elif type == "Input 2":
+            image_path = self.Image2
+            label = self.inputImage2  # QLabel for Input 2
+        else:
+            print("Error: Invalid input type.")
+            return
+
+        # Load image in color (BGR format)
+        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
+
+        if image is None:
+            print(f"Error: Unable to load image {image_path}")
+            return
+
+        # Convert BGR to RGB
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Convert to QImage
+        height, width, channels = image.shape
+        bytes_per_line = channels * width
+        q_image = QImage(image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+        # Convert QImage to QPixmap and display in QLabel
+        pixmap = QPixmap.fromImage(q_image)
+        label.setPixmap(pixmap)  
+
+
+    def radioButton_process(self, method):
+        self.method = method
+ 
+
+    def applyMethod(self):
+        match self.method:
+            case "NCC":
+                # Load images
+                image = cv2.imread(self.Image1, cv2.IMREAD_COLOR)  
+                template = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)  
+                
+                # Process the image
+                result_image = Normal_Cross_Correlation.apply_ncc_matching(image, template)
+
+                # Convert BGR to RGB before displaying
+                result_image = cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)
+
+                # Convert to QImage for display in QLabel
+                height, width, channels = result_image.shape
+                bytes_per_line = channels * width
+                q_image = QImage(result_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+                # Convert QImage to QPixmap and display in QLabel
+                pixmap = QPixmap.fromImage(q_image)
+                self.resultImage.setPixmap(pixmap)  
+                self.resultImage.setScaledContents(True) 
+            
+            case "SSD":
+                pass
+
+            case "SIFT":
+                pass
 
 
 class FeatureExtractionThread(QThread):

@@ -38,6 +38,3 @@ import time
 3. Perform feature matching and analyze the results.  
 4. Record computation times for each step.  
 
----
-
-For any questions, please contact the TA.

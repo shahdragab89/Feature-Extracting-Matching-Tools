@@ -17,6 +17,8 @@ from harris_feature_extractor import HarrisFeatureExtractor
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ncc import Normal_Cross_Correlation
+from sift_extractor import SIFTExtractor, match_features, draw_matches
+
 
 # Load the UI file
 ui, _ = loadUiType("newUI.ui")
@@ -84,7 +86,22 @@ class MainApp(QtWidgets.QMainWindow, ui):
         # Initialization of Feature Matching
         self.method = "NCC"
         self.inputImage1.setScaledContents(True)
-        self.inputImage2.setScaledContents(False)
+        self.inputImage2.setScaledContents(True)
+
+
+        # Default values for SIFT parameters
+        self.sigma_spin.setValue(1.6)
+        self.k_spin_2.setValue(1.414)
+        self.contrastThersh_spin.setValue(0.04)
+        self.edgeThersh_spin.setValue(10)
+        self.magnitudeThersh_spin.setValue(0.3)
+
+        # Set valid ranges
+        self.sigma_spin.setRange(0.1, 10.0)
+        self.k_spin_2.setRange(1.0, 5.0)
+        self.contrastThersh_spin.setRange(0.001, 10.00)
+        self.edgeThersh_spin.setRange(1, 50)
+        self.magnitudeThersh_spin.setRange(0.0, 100.0)
 
         # Buttons
         self.uploadImage1_button.clicked.connect(lambda: self.load_images("Features and Matching", "Input 1"))
@@ -335,8 +352,66 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 pass
 
             case "SIFT":
-                pass
+                        
+                img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)
+                img2 = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)
 
+                if img1 is None or img2 is None:
+                    print("Error loading images.")
+                    return
+
+                print(f"img1 shape: {img1.shape}, img2 shape: {img2.shape}")
+                print(f"img1 min/max: {img1.min()}/{img1.max()}, img2 min/max: {img2.min()}/{img2.max()}")
+
+                # Get parameters from UI
+                sigma = self.sigma_spin.value()
+                k = self.k_spin_2.value()
+                contrast_thresh = self.contrastThersh_spin.value()
+                edge_thresh = self.edgeThersh_spin.value()
+                magnitude_thresh = self.magnitudeThersh_spin.value()
+
+                # Create SIFT detector
+                sift = SIFTExtractor(sigma, k, contrast_thresh, edge_thresh, magnitude_thresh)
+                
+                start = time.time()
+                # Extract features
+                keypoints1, descriptors1 = sift.extract(img1)
+                keypoints2, descriptors2 = sift.extract(img2)
+
+                end = time.time()
+                elapsed_ms = (end - start) * 1000  # Convert to milliseconds
+                self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
+                
+                if len(keypoints1) == 0 or len(keypoints2) == 0:
+                    print("No keypoints detected in one of the images.")
+                    return
+
+                if descriptors1.size == 0 or descriptors2.size == 0:
+                    print("Empty descriptors, skipping.")
+                    return
+
+                # Match features
+                matches = match_features(descriptors1, descriptors2)
+
+                # Visualize matches
+                result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches)
+
+                # Display result in the QLabel
+                self.display_result_image(result_img)
+
+
+    def display_result_image(self, result_image):
+        if len(result_image.shape) == 2:
+            result_image = cv2.cvtColor(result_image, cv2.COLOR_GRAY2RGB)
+        else:
+            result_image = cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)
+
+        height, width, channels = result_image.shape
+        bytes_per_line = channels * width
+        q_image = QImage(result_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+        pixmap = QPixmap.fromImage(q_image)
+        self.resultImage.setPixmap(pixmap)
+        self.resultImage.setScaledContents(True)
 
 class FeatureExtractionThread(QThread):
     result_ready = pyqtSignal(object)
@@ -389,8 +464,6 @@ class FeatureExtractionThread(QThread):
         # Return results
         results = (vis_image, computation_time, lambda_min_values, lambda_ratio_values)
         self.result_ready.emit(results)
-
-
 
 def main():
     parser = argparse.ArgumentParser(description='Harris Feature Extractor')

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1550</width>
-    <height>1028</height>
+    <height>1112</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -657,7 +657,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                        <item>
                         <widget class="QDoubleSpinBox" name="k_spin">
                          <property name="styleSheet">
-                          <string notr="true">QSpinBox {
+                          <string notr="true">QDoubleSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
     border-radius: 8px;
     color: black;
@@ -667,7 +667,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
 }
 
 /* Style for the spin buttons */
-QSpinBox::up-button, QSpinBox::down-button {
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
     background-color: #3D61D3;  /* Blue buttons */
     border: none;
     width: 16px;
@@ -676,19 +676,15 @@ QSpinBox::up-button, QSpinBox::down-button {
 }
 
 /* Hover effect */
-QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
     background-color: #2E4BB7;  /* Slightly darker blue on hover */
 }
 
 /* White Arrow Icons */
-QSpinBox::up-arrow, QSpinBox::down-arrow {
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
     width: 10px;
     height: 10px;
     image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
-}
-
-QSpinBox::down-arrow {
-    image: url(:/icons/icons8-chevron-up-100.png);
 }
 </string>
                          </property>
@@ -751,7 +747,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
                        <item>
                         <widget class="QDoubleSpinBox" name="threshold_spin">
                          <property name="styleSheet">
-                          <string notr="true">QSpinBox {
+                          <string notr="true">QDoubleSpinBox {
     background-color: #FFFFFF;  /* Clean white background */
     border-radius: 8px;
     color: black;
@@ -761,7 +757,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
 }
 
 /* Style for the spin buttons */
-QSpinBox::up-button, QSpinBox::down-button {
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
     background-color: #3D61D3;  /* Blue buttons */
     border: none;
     width: 16px;
@@ -770,19 +766,15 @@ QSpinBox::up-button, QSpinBox::down-button {
 }
 
 /* Hover effect */
-QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
     background-color: #2E4BB7;  /* Slightly darker blue on hover */
 }
 
 /* White Arrow Icons */
-QSpinBox::up-arrow, QSpinBox::down-arrow {
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
     width: 10px;
     height: 10px;
     image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
-}
-
-QSpinBox::down-arrow {
-    image: url(:/icons/icons8-chevron-up-100.png);
 }
 </string>
                          </property>
@@ -885,7 +877,7 @@ font: 75 9pt &quot;MS Shell Dlg 2&quot;;
       </widget>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Feature Extraction and Matching Tool</string>
+        <string>     Extraction and Matching      </string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
@@ -1060,7 +1052,7 @@ font-size: 14px;</string>
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <layout class="QVBoxLayout" name="verticalLayout_6" stretch="1,1">
                  <item>
                   <widget class="QLabel" name="inputImage1">
                    <property name="minimumSize">
@@ -1089,14 +1081,14 @@ border : 2px solid #D1D5DB; </string>
                   <widget class="QLabel" name="inputImage2">
                    <property name="minimumSize">
                     <size>
-                     <width>50</width>
+                     <width>250</width>
                      <height>0</height>
                     </size>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>200</width>
-                     <height>375</height>
+                     <width>500</width>
+                     <height>700</height>
                     </size>
                    </property>
                    <property name="styleSheet">
@@ -1432,6 +1424,548 @@ QPushButton:pressed {
                       <property name="text">
                        <string>upload 2nd Image</string>
                       </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_5">
+                   <property name="frameShape">
+                    <enum>QFrame::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_10">
+                    <item>
+                     <widget class="QFrame" name="frame_53">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_39">
+                       <item>
+                        <widget class="QLabel" name="sigma_label">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>Sigma</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QDoubleSpinBox" name="sigma_spin">
+                         <property name="styleSheet">
+                          <string notr="true">QDoubleSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_54">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_41">
+                       <item>
+                        <widget class="QLabel" name="k_label_2">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>K</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QDoubleSpinBox" name="k_spin_2">
+                         <property name="styleSheet">
+                          <string notr="true">QDoubleSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_55">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_42">
+                       <item>
+                        <widget class="QLabel" name="contrast_label">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>Contrast Thersh</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QDoubleSpinBox" name="contrastThersh_spin">
+                         <property name="styleSheet">
+                          <string notr="true">QDoubleSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_56">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_47">
+                       <item>
+                        <widget class="QLabel" name="edge_label">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>Edge Thersh</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QDoubleSpinBox" name="edgeThersh_spin">
+                         <property name="styleSheet">
+                          <string notr="true">QDoubleSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_59">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_50">
+                       <item>
+                        <widget class="QLabel" name="magnitude_label">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>Magnitude Thersh</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QDoubleSpinBox" name="magnitudeThersh_spin">
+                         <property name="styleSheet">
+                          <string notr="true">QDoubleSpinBox {
+    background-color: #FFFFFF;  /* Clean white background */
+    border-radius: 8px;
+    color: black;
+    border: 2px solid #F2F2F2;  /* Light gray border */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Style for the spin buttons */
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    background-color: #3D61D3;  /* Blue buttons */
+    border: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+/* Hover effect */
+QDoubleSpinBox::up-button:hover, QDoubleSpinBox::down-button:hover {
+    background-color: #2E4BB7;  /* Slightly darker blue on hover */
+}
+
+/* White Arrow Icons */
+QDoubleSpinBox::up-arrow, QDoubleSpinBox::down-arrow {
+    width: 10px;
+    height: 10px;
+    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
+}
+</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QFrame" name="frame_58">
+                      <property name="minimumSize">
+                       <size>
+                        <width>0</width>
+                        <height>60</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>50</height>
+                       </size>
+                      </property>
+                      <property name="styleSheet">
+                       <string notr="true"/>
+                      </property>
+                      <property name="frameShape">
+                       <enum>QFrame::StyledPanel</enum>
+                      </property>
+                      <property name="frameShadow">
+                       <enum>QFrame::Raised</enum>
+                      </property>
+                      <layout class="QHBoxLayout" name="horizontalLayout_49">
+                       <item>
+                        <widget class="QLabel" name="k_label_11">
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <property name="font">
+                          <font>
+                           <family>MS Shell Dlg 2</family>
+                           <pointsize>9</pointsize>
+                           <weight>9</weight>
+                           <italic>false</italic>
+                           <bold>false</bold>
+                          </font>
+                         </property>
+                         <property name="styleSheet">
+                          <string notr="true">color: rgb(0, 0, 0);
+font: 75 9pt &quot;MS Shell Dlg 2&quot;;
+</string>
+                         </property>
+                         <property name="text">
+                          <string>Time Elapsed</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <spacer name="horizontalSpacer_3">
+                         <property name="orientation">
+                          <enum>Qt::Horizontal</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>40</width>
+                           <height>20</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="time_elapsed_label">
+                         <property name="styleSheet">
+                          <string notr="true">background-color: #4264EC;
+border-radius: 5px;
+color:white;
+padding-left:5px;</string>
+                         </property>
+                         <property name="text">
+                          <string>ms</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
                      </widget>
                     </item>
                    </layout>

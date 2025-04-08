@@ -19,7 +19,6 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ncc import Normal_Cross_Correlation
 from sift_extractor import SIFTExtractor, match_features, draw_matches
 
-
 # Load the UI file
 ui, _ = loadUiType("newUI.ui")
 
@@ -394,11 +393,11 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 matches = match_features(descriptors1, descriptors2)
 
                 # Visualize matches
-                result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches)
+                # result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches)
+                result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches[:20])
 
                 # Display result in the QLabel
-                self.display_result_image(result_img)
-
+                self.display_result_image(result_img)               
 
     def display_result_image(self, result_image):
         if len(result_image.shape) == 2:

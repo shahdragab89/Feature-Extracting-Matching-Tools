@@ -18,6 +18,7 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ncc import Normal_Cross_Correlation
 from sift_extractor import SIFTExtractor, match_features, draw_matches
+from ssd import SSDFeatureMatching
 
 # Load the UI file
 ui, _ = loadUiType("newUI.ui")
@@ -348,8 +349,25 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 self.resultImage.setScaledContents(True) 
             
             case "SSD":
-                pass
-
+                # Load images
+                img1 = cv2.imread(self.Image1, cv2.IMREAD_COLOR)
+                img2 = cv2.imread(self.Image2, cv2.IMREAD_COLOR)
+                
+                if img1 is None or img2 is None:
+                    print("Error loading images.")
+                    return
+                    
+                start = time.time()
+                # Apply SSD matching
+                result_image = SSDFeatureMatching.apply_ssd_matching(img1, img2)
+                end = time.time()
+                
+                elapsed_ms = (end - start) * 1000  # Convert to milliseconds
+                self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
+                
+                # Display result
+                self.display_result_image(result_image)
+                
             case "SIFT":
                         
                 img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)

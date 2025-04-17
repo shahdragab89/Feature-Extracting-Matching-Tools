@@ -3,154 +3,113 @@ import numpy as np
 import time
 
 class SSDFeatureMatching:
-    """Sum of Squared Differences (SSD) feature matching class"""
-    
     @staticmethod
-    def compute_ssd(descriptor1, descriptor2):
+    def compute_ssd_region(image_region, template):
         """
-        Compute Sum of Squared Differences between two descriptors.
+        Compute Sum of Squared Differences between an image region and template.
         Lower value indicates better match.
         
         Args:
-            descriptor1: First descriptor vector
-            descriptor2: Second descriptor vector
+            image_region: Region of the main image
+            template: Template image to match
             
         Returns:
             SSD distance value (float)
         """
         # Calculate squared differences
-        diff = descriptor1 - descriptor2
+        diff = image_region.astype(np.float32) - template.astype(np.float32)
         square_diff = np.square(diff)
         
         # Return sum of squared differences
         return np.sum(square_diff)
     
     @staticmethod
-    def match_features(descriptors1, descriptors2, threshold=None, k_best=20):
+    def apply_ssd_matching(image, template):
         """
-        Match features using SSD distance metric.
+        Apply custom SSD template matching to find template in the image.
         
         Args:
-            descriptors1: Array of descriptors from first image
-            descriptors2: Array of descriptors from second image
-            threshold: Optional threshold for maximum SSD distance
-            k_best: Number of best matches to return
+            image: Main image (larger)
+            template: Template image to find (smaller)
             
         Returns:
-            List of (index1, index2, distance) tuples sorted by distance
-        """
-        matches = []
-        
-        # Calculate SSD distance between each pair of descriptors
-        for i, desc1 in enumerate(descriptors1):
-            # Find best match for this descriptor in second image
-            best_distance = float('inf')
-            best_idx = -1
-            
-            for j, desc2 in enumerate(descriptors2):
-                distance = SSDFeatureMatching.compute_ssd(desc1, desc2)
-                
-                if distance < best_distance:
-                    best_distance = distance
-                    best_idx = j
-            
-            # If we found a match below threshold, add it
-            if threshold is None or best_distance < threshold:
-                matches.append((i, best_idx, best_distance))
-        
-        # Sort matches by distance (best matches first)
-        matches.sort(key=lambda x: x[2])
-        
-        # Return k best matches
-        return matches[:k_best]
-    
-    @staticmethod
-    def apply_ssd_matching(img1, img2):
-        """
-        Apply SSD feature matching to two images.
-        
-        Args:
-            img1: First image
-            img2: Second image
-            
-        Returns:
-            Result image with matches drawn
+            Result image with rectangle around the best match
         """
         # Convert images to grayscale if they aren't already
-        if len(img1.shape) == 3:
-            gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+        if len(image.shape) == 3:
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            color_image = image.copy()
         else:
-            gray1 = img1
+            gray_image = image
+            color_image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
             
-        if len(img2.shape) == 3:
-            gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+        if len(template.shape) == 3:
+            gray_template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
         else:
-            gray2 = img2
-        
-        # Use SIFT to extract keypoints and descriptors
-        sift = cv2.SIFT_create()
-        keypoints1, descriptors1 = sift.detectAndCompute(gray1, None)
-        keypoints2, descriptors2 = sift.detectAndCompute(gray2, None)
-        
-        # Match features using SSD
-        matches = SSDFeatureMatching.match_features(descriptors1, descriptors2)
-        
-        # Draw matches
-        result_img = SSDFeatureMatching.draw_matches(img1, keypoints1, img2, keypoints2, matches)
-        
-        return result_img
-    
-    @staticmethod
-    def draw_matches(img1, keypoints1, img2, keypoints2, matches, max_matches=20):
-        """
-        Draw matches between two images.
-        
-        Args:
-            img1: First image
-            keypoints1: Keypoints from first image
-            img2: Second image
-            keypoints2: Keypoints from second image
-            matches: List of (index1, index2, distance) tuples
-            max_matches: Maximum number of matches to draw
-            
-        Returns:
-            Image with matches drawn
-        """
-        # Convert images to BGR if they're grayscale
-        if len(img1.shape) == 2:
-            img1 = cv2.cvtColor(img1, cv2.COLOR_GRAY2BGR)
-        if len(img2.shape) == 2:
-            img2 = cv2.cvtColor(img2, cv2.COLOR_GRAY2BGR)
+            gray_template = template
         
         # Get dimensions
-        h1, w1 = img1.shape[:2]
-        h2, w2 = img2.shape[:2]
+        image_height, image_width = gray_image.shape
+        template_height, template_width = gray_template.shape
         
-        # Create output image
-        height = max(h1, h2)
-        width = w1 + w2
-        output = np.zeros((height, width, 3), dtype=np.uint8)
+        # Make sure template is smaller than the image
+        if template_height > image_height or template_width > image_width:
+            raise ValueError("Template must be smaller than the image")
         
-        # Place images side by side
-        output[:h1, :w1, :] = img1
-        output[:h2, w1:w1+w2, :] = img2
+        # Initialize best match information
+        best_ssd = float('inf')
+        best_location = (0, 0)
         
-        # Get a list of random colors for drawing lines
-        np.random.seed(42)  # For reproducible results
-        colors = np.random.randint(0, 255, (100, 3)).tolist()
+        print(f"Starting template matching with image size: {image_width}x{image_height}, "
+              f"template size: {template_width}x{template_height}")
         
-        # Draw matches
-        for idx, (i, j, dist) in enumerate(matches[:max_matches]):
-            # Get coordinates
-            x1, y1 = map(int, keypoints1[i].pt)
-            x2, y2 = map(int, keypoints2[j].pt)
-            
-            # Draw keypoints
-            cv2.circle(output, (x1, y1), 4, (0, 255, 0), -1)
-            cv2.circle(output, (x2 + w1, y2), 4, (0, 255, 0), -1)
-            
-            # Draw line
-            color = colors[idx % len(colors)]
-            cv2.line(output, (x1, y1), (x2 + w1, y2), color, 1)
+        # For larger images, use a step > 1 for faster processing
+        # We can start with a larger step for initial search, then refine
+        step = max(1, min(template_width, template_height) // 20)
         
-        return output
+        # First pass: coarse search
+        for y in range(0, image_height - template_height + 1, step):
+            for x in range(0, image_width - template_width + 1, step):
+                # Extract region of interest from the image
+                roi = gray_image[y:y+template_height, x:x+template_width]
+                
+                # Compute SSD
+                ssd = SSDFeatureMatching.compute_ssd_region(roi, gray_template)
+                
+                # Update best match
+                if ssd < best_ssd:
+                    best_ssd = ssd
+                    best_location = (x, y)
+        
+        # Second pass: refine search around best match (optional for better precision)
+        x_start = max(0, best_location[0] - step)
+        y_start = max(0, best_location[1] - step)
+        x_end = min(image_width - template_width, best_location[0] + step)
+        y_end = min(image_height - template_height, best_location[1] + step)
+        
+        for y in range(y_start, y_end + 1):
+            for x in range(x_start, x_end + 1):
+                # Extract region of interest from the image
+                roi = gray_image[y:y+template_height, x:x+template_width]
+                
+                # Compute SSD
+                ssd = SSDFeatureMatching.compute_ssd_region(roi, gray_template)
+                
+                # Update best match
+                if ssd < best_ssd:
+                    best_ssd = ssd
+                    best_location = (x, y)
+        
+        print(f"Best match found at: {best_location} with SSD value: {best_ssd}")
+        
+        # Draw rectangle around best match
+        x, y = best_location
+        cv2.rectangle(
+            color_image, 
+            (x, y), 
+            (x + template_width, y + template_height), 
+            (0, 0, 255),  # Red color in BGR
+            2  # Line thickness
+        )
+        
+        return color_image

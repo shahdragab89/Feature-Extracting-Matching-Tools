@@ -350,15 +350,15 @@ class MainApp(QtWidgets.QMainWindow, ui):
             
             case "SSD":
                 # Load images
-                img1 = cv2.imread(self.Image1, cv2.IMREAD_COLOR)
-                img2 = cv2.imread(self.Image2, cv2.IMREAD_COLOR)
+                img1 = cv2.imread(self.Image1, cv2.IMREAD_COLOR)  # Main image
+                img2 = cv2.imread(self.Image2, cv2.IMREAD_COLOR)  # Template image
                 
                 if img1 is None or img2 is None:
                     print("Error loading images.")
                     return
-                    
+                
                 start = time.time()
-                # Apply SSD matching
+                # Apply custom SSD template matching
                 result_image = SSDFeatureMatching.apply_ssd_matching(img1, img2)
                 end = time.time()
                 
@@ -367,7 +367,7 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 
                 # Display result
                 self.display_result_image(result_image)
-                
+
             case "SIFT":
                         
                 img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)

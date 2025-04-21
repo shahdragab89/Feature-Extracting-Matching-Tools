@@ -59,10 +59,7 @@ class MainApp(QtWidgets.QMainWindow, ui):
         self.normalizedCrossSelection_radioButton.setChecked(True)
         self.handle_radio("Cross Section")
 
-        self.load_button.clicked.connect(lambda: self.load_images("Harris"))
-        self.blockSize_spin.setRange(2, 15)
-        self.blockSize_spin.setValue(2)
-        self.blockSize_spin.setSingleStep(1)
+        self.load_button.clicked.connect(lambda: self.load_images("Harris" , "Input 1"))
 
         self.ksize_spin.setRange(1, 31)
         self.ksize_spin.setValue(3)
@@ -150,19 +147,20 @@ class MainApp(QtWidgets.QMainWindow, ui):
             
         # For the Harris Page
         if page == "Harris":
-            self.loaded_images = {}
-            self.file_list.clear()
-            
-            for path in image_paths:
-                filename = os.path.basename(path)
-                self.file_list.addItem(filename)
-                self.loaded_images[filename] = path
-            
-            if image_paths:
-                self.run_button.setEnabled(True)
-                # Select the first image
-                self.file_list.setCurrentRow(0)
-                self.display_selected_image(self.file_list.currentItem())
+            if type == "Input 1":
+                self.loaded_images = {}
+                self.file_list.clear()
+                
+                for path in image_paths:
+                    filename = os.path.basename(path)
+                    self.file_list.addItem(filename)
+                    self.loaded_images[filename] = path
+                
+                if image_paths:
+                    self.run_button.setEnabled(True)
+                    # Select the first image
+                    self.file_list.setCurrentRow(0)
+                    self.display_selected_image(self.file_list.currentItem())
 
         # For feature extraction and Matching tools
         elif page == "Features and Matching": 
@@ -211,7 +209,6 @@ class MainApp(QtWidgets.QMainWindow, ui):
             return
             
         # Get parameters
-        block_size = self.blockSize_spin.value()
         k_size = self.ksize_spin.value()
         k = self.k_spin.value()
         threshold = self.threshold_spin.value()
@@ -219,7 +216,6 @@ class MainApp(QtWidgets.QMainWindow, ui):
         # Initialize feature extractor
         from harris_feature_extractor import HarrisFeatureExtractor
         self.feature_extractor = HarrisFeatureExtractor(
-            block_size=block_size,
             k_size=k_size,
             k=k,
             threshold=threshold
@@ -487,7 +483,6 @@ def main():
     parser.add_argument('--batch', action='store_true', help='Run in batch mode')
     parser.add_argument('--image_dir', type=str, help='Directory containing images to process')
     parser.add_argument('--output_dir', type=str, help='Directory to save results')
-    parser.add_argument('--block_size', type=int, default=2, help='Block size for Harris detector')
     parser.add_argument('--k_size', type=int, default=3, help='Kernel size for Sobel operator')
     parser.add_argument('--k', type=float, default=0.04, help='Harris detector free parameter')
     parser.add_argument('--threshold', type=float, default=0.01, help='Threshold for detecting corners')
@@ -497,7 +492,6 @@ def main():
     
     if args.batch and args.image_dir:
         params = {
-            'block_size': args.block_size,
             'k_size': args.k_size,
             'k': args.k,
             'threshold': args.threshold

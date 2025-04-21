@@ -5,31 +5,28 @@ import os
 
 
 class HarrisFeatureExtractor:
-    def __init__(self, block_size=3, k_size=3, k=0.04, threshold=0.01):        
-        self.block_size = block_size
+    def __init__(self,  k_size=3, k=0.04, threshold=0.01):        
         self.k_size = k_size
         self.k = k
         self.threshold = threshold
 
     def run_batch(self, image_dir, output_dir=None, params=None):
-        # Set up default parameters
+        #setting up default parameters
         if params is None:
             params = {
-                'block_size': 2,
-                'k_size': 3,
+                'k_size': 3, #sobel_filter kernel size
                 'k': 0.04,
                 'threshold': 0.01
             }
             
-        # Initialize feature extractor
+        #creating new insstance of HarrisFeatureExtractor with default parameters
         self.feature_extractor = HarrisFeatureExtractor(
-            block_size=params.get('block_size', 2),
             k_size=params.get('k_size', 3),
             k=params.get('k', 0.04),
             threshold=params.get('threshold', 0.01)
         )
         
-        # Set up output directory
+        #setingt up output directory for resultss
         if output_dir is None:
             output_dir = os.path.join(os.path.dirname(image_dir), 
                                      os.path.basename(image_dir) + "_results")
@@ -37,7 +34,7 @@ class HarrisFeatureExtractor:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
             
-        # Get list of image files
+        #get a list of image files
         valid_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff')
         image_files = [f for f in os.listdir(image_dir) 
                      if os.path.isfile(os.path.join(image_dir, f)) and 
@@ -47,12 +44,12 @@ class HarrisFeatureExtractor:
             print(f"No valid image files found in {image_dir}")
             return {}
             
-        # Process each image
+        #process each image on its own 
         results = {}
         for image_file in image_files:
             print(f"Processing {image_file}...")
             
-            # Load image
+            #load image
             image_path = os.path.join(image_dir, image_file)
             image = cv2.imread(image_path)
             
@@ -60,32 +57,30 @@ class HarrisFeatureExtractor:
                 print(f"Failed to load {image_file}, skipping.")
                 continue
                 
-            # Determine if image is color or grayscale
+            #determine whether color or grayscale
             is_color = len(image.shape) == 3 and image.shape[2] == 3
             
-            # Start timing
+            #calc time taken to extract features
             start_time = time.time()
-            
-            # Extract features
+            #feature_extraction:
             corners, eigenvalues = self.feature_extractor.detect_features(image, is_color)
-            
-            # End timing
+            #end
             elapsed_time = time.time() - start_time
             
-            # Compute metrics
+            #compute metricss using eigens
             metrics = self.feature_extractor.compute_lambda_metrics(eigenvalues)
             
-            # Create visualization
+            #visualization creation of det4ected corners on oriignal img:
             vis_image = self.feature_extractor.visualize_features(image, corners)
             
-            # Save results
+            #saving results
             base_name = os.path.splitext(image_file)[0]
             
-            # Save visualized image
+            #saving visualizations
             vis_path = os.path.join(output_dir, f"{base_name}_harris.jpg")
             cv2.imwrite(vis_path, vis_image)
             
-            # Generate and save lambda distribution plot
+            #generate lambda plots/histograms
             plt.figure(figsize=(10, 8))
             
             plt.subplot(2, 1, 1)
@@ -104,14 +99,14 @@ class HarrisFeatureExtractor:
             plt.savefig(os.path.join(output_dir, f"{base_name}_lambda_dist.png"))
             plt.close()
             
-            # Store results
+            #store results in results dictionary 
             results[image_file] = {
                 'computation_time': elapsed_time,
                 'num_corners': len(corners),
                 'metrics': metrics
             }
             
-            # Write results to text file
+            #writes results as text into txt file
             with open(os.path.join(output_dir, f"{base_name}_results.txt"), 'w') as f:
                 f.write(f"Results for {image_file}\n")
                 f.write(f"Computation Time: {elapsed_time:.4f} seconds\n")
@@ -125,11 +120,12 @@ class HarrisFeatureExtractor:
             
         return results
     
+    #comparing results accross multiple imgs
     def compare_images(self, results):
         if not results:
             return {}
             
-        # Extract metrics
+        #extracting metrics
         computation_times = []
         num_corners = []
         lambda_min_means = []
@@ -141,7 +137,7 @@ class HarrisFeatureExtractor:
             lambda_min_means.append(image_results['metrics']['lambda_min_mean'])
             lambda_ratio_means.append(image_results['metrics']['lambda_ratio_mean'])
             
-        # Compute comparison metrics
+        #computing comparison metrics using mean and std for compering imgs 
         comparison = {
             'avg_computation_time': np.mean(computation_times),
             'std_computation_time': np.std(computation_times),
@@ -185,39 +181,96 @@ class HarrisFeatureExtractor:
         return report_path        
         
     def detect_features(self, image, is_color=True):
-        # Make sure block_size is odd
-        if self.block_size % 2 == 0:
-            self.block_size += 1
-
-        # Convert to grayscale if color
+        #convert colored img to grayscale 
         if is_color and len(image.shape) == 3:
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            gray = 0.299 * image[:,:,0] + 0.587 * image[:,:,1] + 0.114 * image[:,:,2]
         else:
             gray = image.copy()
-            
-        # Convert to float32 for processing
         gray = np.float32(gray)
         
-        # Compute Harris corner response
-        harris_response = cv2.cornerHarris(gray, self.block_size, self.k_size, self.k)
+        #get dims of the img
+        height, width = gray.shape
         
-        # Get the second moment matrix (M) elements for eigenvalue computation
-        # Using Sobel derivatives
-        dx = cv2.Sobel(gray, cv2.CV_32F, 1, 0, ksize=self.k_size)
-        dy = cv2.Sobel(gray, cv2.CV_32F, 0, 1, ksize=self.k_size)
+        #sobel filter applying for gradients calc
+        if self.k_size == 3:
+            sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=np.float32)
+            sobel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], dtype=np.float32)
+        elif self.k_size == 5:
+            sobel_x = np.array([[-1, -2, 0, 2, 1], 
+                            [-4, -8, 0, 8, 4], 
+                            [-6, -12, 0, 12, 6], 
+                            [-4, -8, 0, 8, 4], 
+                            [-1, -2, 0, 2, 1]], dtype=np.float32)
+            sobel_y = sobel_x.T  # transpose sobel x for getting sobel y
+        else:
+            #default to the sobel 3 if higher
+            sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=np.float32)
+            sobel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]], dtype=np.float32)
+
+        #apply sobel filters using CONV:
+        dx = np.zeros_like(gray)
+        dy = np.zeros_like(gray)
+
+        #pad img for convolution
+        pad = self.k_size // 2
+        padded = np.pad(gray, pad, mode='reflect') # reflect mode in padding adds border around img by reflecting values across the edge
         
-        # Compute components of the Harris matrix
-        Ixx = cv2.GaussianBlur(dx*dx, (self.block_size, self.block_size), 0)
-        Ixy = cv2.GaussianBlur(dx*dy, (self.block_size, self.block_size), 0)
-        Iyy = cv2.GaussianBlur(dy*dy, (self.block_size, self.block_size), 0)
+        #convolution calculationf for derivatives dx and dy:
+        for i in range(height):
+            for j in range(width):
+                window = padded[i:i+self.k_size, j:j+self.k_size]
+                dx[i, j] = np.sum(window * sobel_x)
+                dy[i, j] = np.sum(window * sobel_y)
         
-        # Normalize harris_response between 0 and 1
-        normalized_response = harris_response / harris_response.max()
+        #getting Ixx, Ixy, Iyy
+        Ixx = dx * dx
+        Ixy = dx * dy
+        Iyy = dy * dy
         
-        # Threshold the Harris response
-        corner_mask = normalized_response > self.threshold
+        #3x3 gaussian smoothing:
+        gaussian_kernel = np.array([ #sigma = 1 by default
+            [0.075, 0.124, 0.075],
+            [0.124, 0.204, 0.124],
+            [0.075, 0.124, 0.075]
+        ], dtype=np.float32)  
+
+        #pad Ixx, Ixy, Iyy for smoothing
+        pad = 1 #for 3*3
+        Ixx_padded = np.pad(Ixx, pad, mode='reflect')
+        Ixy_padded = np.pad(Ixy, pad, mode='reflect')
+        Iyy_padded = np.pad(Iyy, pad, mode='reflect')
+
+        #apply gaussian smoothing
+        Ixx_smooth = np.zeros_like(Ixx)
+        Ixy_smooth = np.zeros_like(Ixy)
+        Iyy_smooth = np.zeros_like(Iyy)
+
+        for i in range(height):
+            for j in range(width):
+                #extract 3*3 windows
+                window_xx = Ixx_padded[i:i+3, j:j+3]
+                window_xy = Ixy_padded[i:i+3, j:j+3]
+                window_yy = Iyy_padded[i:i+3, j:j+3]
+                
+                #apply 3*3 gaussian kernel
+                Ixx_smooth[i, j] = np.sum(window_xx * gaussian_kernel)
+                Ixy_smooth[i, j] = np.sum(window_xy * gaussian_kernel)
+                Iyy_smooth[i, j] = np.sum(window_yy * gaussian_kernel)
         
-        # Get corner coordinates
+        #Harris response: R = det(M) - k * trace(M)^2
+        #wher M = [Ixx_smooth, Ixy_smooth; Ixy_smooth, Iyy_smooth]
+        det_M = Ixx_smooth * Iyy_smooth - Ixy_smooth * Ixy_smooth
+        trace_M = Ixx_smooth + Iyy_smooth
+        harris_response = det_M - self.k * (trace_M ** 2)
+        
+        #normalize harris response from 0 to 1
+        normalized_response = harris_response / np.max(harris_response) if np.max(harris_response) > 0 else harris_response
+        
+        #threshold harris response
+        corner_mask = normalized_response > self.threshold ##THE USAGE OF SET THRESHOLD
+        # creates a binary mask where only pixels with response values above the threshold are considered corners
+        
+        #get corner coordinates
         corners = []
         eigenvalues = []
         
@@ -225,28 +278,42 @@ class HarrisFeatureExtractor:
         
         for y, x in zip(y_indices, x_indices):
             # Create the second moment matrix for this pixel
-            M = np.array([[Ixx[y, x], Ixy[y, x]], 
-                         [Ixy[y, x], Iyy[y, x]]])
+            M = np.array([[Ixx_smooth[y, x], Ixy_smooth[y, x]], 
+                        [Ixy_smooth[y, x], Iyy_smooth[y, x]]])
             
-            # Calculate eigenvalues
-            eig_vals = np.linalg.eigvals(M)
+            #eigenvals calc:
+            #for 2*2 matrix M [[a, b], [c, d]], eigenvalues are:
+            # λ = (a + d ± sqrt((a-d)^2 + 4bc))/2
+            a, b = M[0, 0], M[0, 1]
+            c, d = M[1, 0], M[1, 1]
             
-            # Only consider valid eigenvalues (sometimes numerical issues cause complex values)
-            if np.isreal(eig_vals).all():
-                eig_vals = eig_vals.real
+            trace = a + d
+            determinant = a * d - b * c
+            
+            # Calculate discriminant
+            discriminant = trace**2 - 4 * determinant
+            
+            # Check if discriminant is non-negative
+            if discriminant >= 0:
+                # Calculate eigenvalues
+                sqrt_discriminant = np.sqrt(discriminant)
+                lambda1 = (trace + sqrt_discriminant) / 2
+                lambda2 = (trace - sqrt_discriminant) / 2
+                
+                # Store corner and eigenvalues
                 corners.append((x, y))
-                eigenvalues.append((eig_vals[0], eig_vals[1]))
+                eigenvalues.append((lambda1, lambda2))
         
         return corners, eigenvalues
     
     def visualize_features(self, image, corners, radius=3, color=(0, 255, 0), thickness=2):
-        # Create a copy to avoid modifying the original
-        if len(image.shape) == 2:  # Grayscale
+        #create copy of original img to to avoid modifying it
+        if len(image.shape) == 2:  # grayscale case
             vis_img = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-        else:  # Color
+        else:  # color case
             vis_img = image.copy()
             
-        # Draw circles at corner locations
+        #draw green cirvles at corners to detect their locations
         for x, y in corners:
             cv2.circle(vis_img, (x, y), radius, color, thickness)
             
@@ -261,7 +328,7 @@ class HarrisFeatureExtractor:
             lambda_max = max(eig_vals)
             
             lambda_min_values.append(lambda_min)
-            if lambda_max > 0:  # Avoid division by zero
+            if lambda_max > 0: 
                 lambda_ratio_values.append(lambda_min / lambda_max)
                 
         metrics = {
@@ -300,10 +367,7 @@ class HarrisFeatureExtractor:
 
 
 if __name__ == "__main__":
-    # Simple test case
     import matplotlib.pyplot as plt
-    
-    # Load test image
     test_image = cv2.imread("test_image.jpg")
     if test_image is None:
         # Create a synthetic test image if no image is available

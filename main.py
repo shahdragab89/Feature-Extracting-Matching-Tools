@@ -17,8 +17,11 @@ from harris_feature_extractor import HarrisFeatureExtractor
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ncc import Normal_Cross_Correlation
-from sift_extractor import SIFTExtractor, match_features, draw_matches
 from ssd import SSDFeatureMatching
+import pysift
+import logging
+logger = logging.getLogger(__name__)
+
 
 # Load the UI file
 ui, _ = loadUiType("newUI.ui")
@@ -85,20 +88,6 @@ class MainApp(QtWidgets.QMainWindow, ui):
         self.inputImage1.setScaledContents(True)
         self.inputImage2.setScaledContents(True)
 
-
-        # Default values for SIFT parameters
-        self.sigma_spin.setValue(1.6)
-        self.k_spin_2.setValue(1.414)
-        self.contrastThersh_spin.setValue(0.04)
-        self.edgeThersh_spin.setValue(10)
-        self.magnitudeThersh_spin.setValue(0.3)
-
-        # Set valid ranges
-        self.sigma_spin.setRange(0.1, 10.0)
-        self.k_spin_2.setRange(1.0, 5.0)
-        self.contrastThersh_spin.setRange(0.001, 10.00)
-        self.edgeThersh_spin.setRange(1, 50)
-        self.magnitudeThersh_spin.setRange(0.0, 100.0)
 
         # Buttons
         self.uploadImage1_button.clicked.connect(lambda: self.load_images("Features and Matching", "Input 1"))
@@ -365,7 +354,6 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 self.display_result_image(result_image)
 
             case "SIFT":
-                        
                 img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)
                 img2 = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)
 
@@ -375,43 +363,88 @@ class MainApp(QtWidgets.QMainWindow, ui):
 
                 print(f"img1 shape: {img1.shape}, img2 shape: {img2.shape}")
                 print(f"img1 min/max: {img1.min()}/{img1.max()}, img2 min/max: {img2.min()}/{img2.max()}")
+                MIN_MATCH_COUNT = 10
 
-                # Get parameters from UI
-                sigma = self.sigma_spin.value()
-                k = self.k_spin_2.value()
-                contrast_thresh = self.contrastThersh_spin.value()
-                edge_thresh = self.edgeThersh_spin.value()
-                magnitude_thresh = self.magnitudeThersh_spin.value()
-
-                # Create SIFT detector
-                sift = SIFTExtractor(sigma, k, contrast_thresh, edge_thresh, magnitude_thresh)
-                
                 start = time.time()
-                # Extract features
-                keypoints1, descriptors1 = sift.extract(img1)
-                keypoints2, descriptors2 = sift.extract(img2)
+                # Compute SIFT keypoints and descriptors
+                kp1, des1 = pysift.computeKeypointsAndDescriptors(img1)
+                kp2, des2 = pysift.computeKeypointsAndDescriptors(img2)
 
                 end = time.time()
-                elapsed_ms = (end - start) * 1000  # Convert to milliseconds
+
+                elapsed_ms = (end - start) * 1000
                 self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
+
+
+                # Initialize and use FLANN
+                FLANN_INDEX_KDTREE = 0
+                index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+                search_params = dict(checks = 50)
+                flann = cv2.FlannBasedMatcher(index_params, search_params)
+                matches = flann.knnMatch(des1, des2, k=2)
+
+                # Lowe's ratio test
+                good = []
+                for m, n in matches:
+                    if m.distance < 0.7 * n.distance:
+                        good.append(m)
+
+                if len(good) > MIN_MATCH_COUNT:
+                    # Estimate homography between template and scene
+                    src_pts = np.float32([ kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+                    dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+
+                    M = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)[0]
+
+                    # Draw detected template in scene image
+                    h, w = img1.shape
+                    pts = np.float32([[0, 0],
+                                    [0, h - 1],
+                                    [w - 1, h - 1],
+                                    [w - 1, 0]]).reshape(-1, 1, 2)
+                    dst = cv2.perspectiveTransform(pts, M)
+
+                    img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
+
+                    # h1, w1 = img1.shape
+                    # h2, w2 = img2.shape
+                    # nWidth = w1 + w2
+                    # nHeight = max(h1, h2)
+                    # hdif = int((h2 - h1) / 2)
+                    # result_img = np.zeros((nHeight, nWidth, 3), np.uint8)
+
+                    # for i in range(3):
+                    #     result_img[hdif:hdif + h1, :w1, i] = img1
+                    #     result_img[:h2, w1:w1 + w2, i] = img2
+
+                    # # Draw SIFT keypoint matches
+                    # for m in good:
+                    #     pt1 = (int(kp1[m.queryIdx].pt[0]), int(kp1[m.queryIdx].pt[1] + hdif))
+                    #     pt2 = (int(kp2[m.trainIdx].pt[0] + w1), int(kp2[m.trainIdx].pt[1]))
+                    #     cv2.line(result_img, pt1, pt2, (255, 0, 0))
+
+                    h1, w1 = img1.shape
+                    h2, w2 = img2.shape
+                    nWidth = max(w1, w2)
+                    nHeight = h1 + h2
+                    result_img = np.zeros((nHeight, nWidth, 3), np.uint8)
+
+                    for i in range(3):
+                        result_img[:h1, :w1, i] = img1
+                        result_img[h1:h1+h2, :w2, i] = img2
+
+                    # Draw SIFT keypoint matches
+                    for m in good:
+                        pt1 = (int(kp1[m.queryIdx].pt[0]), int(kp1[m.queryIdx].pt[1]))
+                        pt2 = (int(kp2[m.trainIdx].pt[0]), int(kp2[m.trainIdx].pt[1] + h1))  # shift y by h1
+                        cv2.line(result_img, pt1, pt2, (255, 0, 0))
+
+
+                    self.display_result_image(result_img)
+                else:
+                    print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
+        
                 
-                if len(keypoints1) == 0 or len(keypoints2) == 0:
-                    print("No keypoints detected in one of the images.")
-                    return
-
-                if descriptors1.size == 0 or descriptors2.size == 0:
-                    print("Empty descriptors, skipping.")
-                    return
-
-                # Match features
-                matches = match_features(descriptors1, descriptors2)
-
-                # Visualize matches
-                # result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches)
-                result_img = draw_matches(img1, keypoints1, img2, keypoints2, matches[:20])
-
-                # Display result in the QLabel
-                self.display_result_image(result_img)               
 
     def display_result_image(self, result_image):
         if len(result_image.shape) == 2:

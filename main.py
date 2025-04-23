@@ -17,7 +17,7 @@ from harris_feature_extractor import HarrisFeatureExtractor
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from ncc import Normal_Cross_Correlation
-from sift_extractor import SIFTExtractor, match_features, draw_matches
+from sift_extractor import SIFTExtractor, match_features, draw_matches, create_sift_matching_visualization
 from ssd import SSDFeatureMatching
 
 # Load the UI file

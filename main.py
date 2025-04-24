@@ -316,9 +316,13 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 # Load images
                 image = cv2.imread(self.Image1, cv2.IMREAD_COLOR)  
                 template = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)  
+
+                start = time.time()
                 
                 # Process the image
                 result_image = Normal_Cross_Correlation.apply_ncc_matching(image, template)
+
+                end = time.time()
 
                 # Convert BGR to RGB before displaying
                 result_image = cv2.cvtColor(result_image, cv2.COLOR_BGR2RGB)
@@ -327,6 +331,10 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 height, width, channels = result_image.shape
                 bytes_per_line = channels * width
                 q_image = QImage(result_image.data, width, height, bytes_per_line, QImage.Format_RGB888)
+
+                # Find elapsed time
+                elapsed_ms = (end - start) * 1000  # Convert to milliseconds
+                self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
 
                 # Convert QImage to QPixmap and display in QLabel
                 pixmap = QPixmap.fromImage(q_image)

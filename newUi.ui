@@ -69,7 +69,7 @@ QTabBar::tab:!selected {
 </string>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
@@ -413,100 +413,6 @@ QPushButton:pressed {
                       <property name="text">
                        <string>upload</string>
                       </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QFrame" name="frame_49">
-                      <property name="minimumSize">
-                       <size>
-                        <width>0</width>
-                        <height>60</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>16777215</width>
-                        <height>50</height>
-                       </size>
-                      </property>
-                      <property name="styleSheet">
-                       <string notr="true"/>
-                      </property>
-                      <property name="frameShape">
-                       <enum>QFrame::StyledPanel</enum>
-                      </property>
-                      <property name="frameShadow">
-                       <enum>QFrame::Raised</enum>
-                      </property>
-                      <layout class="QHBoxLayout" name="horizontalLayout_31">
-                       <item>
-                        <widget class="QLabel" name="blockSize_Label">
-                         <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                           <horstretch>0</horstretch>
-                           <verstretch>0</verstretch>
-                          </sizepolicy>
-                         </property>
-                         <property name="font">
-                          <font>
-                           <family>MS Shell Dlg 2</family>
-                           <pointsize>9</pointsize>
-                           <weight>9</weight>
-                           <italic>false</italic>
-                           <bold>false</bold>
-                          </font>
-                         </property>
-                         <property name="styleSheet">
-                          <string notr="true">color: rgb(0, 0, 0);
-font: 75 9pt &quot;MS Shell Dlg 2&quot;;
-</string>
-                         </property>
-                         <property name="text">
-                          <string>Block Size:</string>
-                         </property>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QSpinBox" name="blockSize_spin">
-                         <property name="styleSheet">
-                          <string notr="true">QSpinBox {
-    background-color: #FFFFFF;  /* Clean white background */
-    border-radius: 8px;
-    color: black;
-    border: 2px solid #F2F2F2;  /* Light gray border */
-    padding: 5px;
-    font-size: 14px;
-}
-
-/* Style for the spin buttons */
-QSpinBox::up-button, QSpinBox::down-button {
-    background-color: #3D61D3;  /* Blue buttons */
-    border: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-}
-
-/* Hover effect */
-QSpinBox::up-button:hover, QSpinBox::down-button:hover {
-    background-color: #2E4BB7;  /* Slightly darker blue on hover */
-}
-
-/* White Arrow Icons */
-QSpinBox::up-arrow, QSpinBox::down-arrow {
-    width: 10px;
-    height: 10px;
-    image: url(:/icons/icons8-chevron-up-100.png); /* Replace with actual white arrow icon */
-}
-
-QSpinBox::down-arrow {
-    image: url(:/icons/icons8-chevron-up-100.png);
-}
-</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
                      </widget>
                     </item>
                     <item>

@@ -22,13 +22,13 @@ def computeKeypointsAndDescriptors(image, sigma=1.6, num_intervals=3, assumed_bl
     descriptors = generateDescriptors(keypoints, gaussian_images)
     return keypoints, descriptors
 
-## create the pyramid and dog
+###### create the pyramid and dog
 
 
 # upsample the image, blurred to match the target sigma, 
 # the result is the base image for gaussian pyramid construction
 def generateBaseImage(image, sigma, assumed_blur):
-    """Generate base image from input image by upsampling by 2 in both directions and blurring
+    """Generate base image from input image by upsampling by 2 in both directions and blurring and gives the sigma diff to go from one scale to another 
     """
     logger.debug('Generating base image...')
     # enlarge the image by 2x, to detect smaller features more reliably, 
@@ -42,7 +42,7 @@ def generateBaseImage(image, sigma, assumed_blur):
     return GaussianBlur(image, (0, 0), sigmaX=sigma_diff, sigmaY=sigma_diff)  # the image blur is now sigma instead of assumed_blur
 
 def computeNumberOfOctaves(image_shape):
-    """Compute number of octaves in image pyramid as function of base image shape (OpenCV default)
+    """Compute number of octaves in image pyramid as function of base image shape (eg 152x152 will be 6 octaves)
     """
     # in each octave, the image is blurred multiple times then downsampled by 2x 
     # and then blur it multiple times and we do this until we reach the image to be 1 pixel 
@@ -217,6 +217,7 @@ def computeGradientAtCenterPixel(pixel_array): #first derivative of the dog pyra
     ds = 0.5 * (pixel_array[2, 1, 1] - pixel_array[0, 1, 1])  #looks up and down in the above and the below levels
     return array([dx, dy, ds])
 
+# do edge filtering
 def computeHessianAtCenterPixel(pixel_array): #second derivative of dog pyramid
     """Approximate Hessian at center pixel [1, 1, 1] of 3x3x3 array using central difference formula of order O(h^2), where h is the step size
     """
@@ -239,9 +240,8 @@ def computeHessianAtCenterPixel(pixel_array): #second derivative of dog pyramid
 
 
 #####orientations
-
 def computeKeypointsWithOrientations(keypoint, octave_index, gaussian_image, radius_factor=3, num_bins=36, peak_ratio=0.8, scale_factor=1.5):
-    """Compute orientations for each keypoint
+    """Compute orientations for each keypoint (square around keypoint)
     """
     logger.debug('Computing keypoint orientations...')
     keypoints_with_orientations = []
@@ -304,8 +304,8 @@ def computeKeypointsWithOrientations(keypoint, octave_index, gaussian_image, rad
 def compareKeypoints(keypoint1, keypoint2):
     """Return True if keypoint1 is less than keypoint2
     """
-    #ex keypoint1 = KeyPoint(x=100, y=200, size=5, angle=45, response=0.8, octave=2, class_id=3)
-    #   keypoint2 = KeyPoint(x=100, y=200, size=5, angle=75, response=0.7, octave=2, class_id=3)
+    #ex keypoint1 = KeyPoint(x=100, y=200, size=6, angle=75, response=0.8, octave=3, class_id=3)
+    #   keypoint2 = KeyPoint(x=200, y=300, size=5, angle=45, response=0.7, octave=2, class_id=3)
 
     #we arrange the keypoints in ascending order
     #we start for left to right
@@ -374,7 +374,7 @@ def convertKeypointsToInputImageSize(keypoints):
 def unpackOctave(keypoint):
     """Compute octave, layer, and scale from a keypoint
     """
-    #octave [first 16 bits not used here | layer  ndex | octave index]
+    #octave [first 16 bits not used here but generaly used for subpixel calculations | scale  index | octave index]
     octave = keypoint.octave & 255 #which octave you are in
     layer = (keypoint.octave >> 8) & 255 #which layer within the same octave you are in 
     if octave >= 128: #handles negative octaves, when octave = 255 becomes -1
@@ -445,6 +445,7 @@ def generateDescriptors(keypoints, gaussian_images, window_width=4, num_bins=8, 
                        #The rotated orientation, mapped into 8-bin orientation histogram
                         orientation_bin_list.append((gradient_orientation - angle) * bins_per_degree)
 
+        #distribute the effect of the gradient across the 8 points in 3d space 
         for row_bin, col_bin, magnitude, orientation_bin in zip(row_bin_list, col_bin_list, magnitude_list, orientation_bin_list):
             # Smoothing via trilinear interpolation to spread the influence across nearby bins
             # Notations follows https://en.wikipedia.org/wiki/Trilinear_interpolation

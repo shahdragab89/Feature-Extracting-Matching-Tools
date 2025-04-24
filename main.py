@@ -362,6 +362,7 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 self.display_result_image(result_image)
 
             case "SIFT":
+                # Read input images in grayscale
                 img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)
                 img2 = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)
 
@@ -374,19 +375,17 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 MIN_MATCH_COUNT = 10
 
                 start = time.time()
-                # Compute SIFT keypoints and descriptors
                 kp1, des1 = pysift.computeKeypointsAndDescriptors(img1)
                 kp2, des2 = pysift.computeKeypointsAndDescriptors(img2)
-
                 end = time.time()
 
                 elapsed_ms = (end - start) * 1000
                 self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
 
-                # Initialize and use FLANN
+                # FLANN-based matcher
                 FLANN_INDEX_KDTREE = 0
-                index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
-                search_params = dict(checks = 50)
+                index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
+                search_params = dict(checks=50)
                 flann = cv2.FlannBasedMatcher(index_params, search_params)
                 matches = flann.knnMatch(des1, des2, k=2)
 
@@ -397,45 +396,110 @@ class MainApp(QtWidgets.QMainWindow, ui):
                         good.append(m)
 
                 if len(good) > MIN_MATCH_COUNT:
-                    # Estimate homography between template and scene
-                    src_pts = np.float32([ kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
-                    dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+                    src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+                    dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
 
                     M = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)[0]
 
-                    # Draw detected template in scene image
-                    h, w = img1.shape
-                    pts = np.float32([[0, 0],
-                                    [0, h - 1],
-                                    [w - 1, h - 1],
-                                    [w - 1, 0]]).reshape(-1, 1, 2)
+                    pts = np.float32([[0, 0], [0, img1.shape[0] - 1], [img1.shape[1] - 1, img1.shape[0] - 1], [img1.shape[1] - 1, 0]]).reshape(-1, 1, 2)
                     dst = cv2.perspectiveTransform(pts, M)
-
                     img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
 
-                    h1, w1 = img1.shape
-                    h2, w2 = img2.shape
-                    nWidth = max(w1, w2)
-                    nHeight = h1 + h2
-                    result_img = np.zeros((nHeight, nWidth, 3), np.uint8)
+                    # Match image sizes by resizing both to the same target height and width
+                    target_height = max(img1.shape[0], img2.shape[0])
+                    target_width = max(img1.shape[1], img2.shape[1])
 
-                    for i in range(3):
-                        result_img[:h1, :w1, i] = img1
-                        result_img[h1:h1+h2, :w2, i] = img2
+                    img1_resized = cv2.resize(img1, (target_width, target_height))
+                    img2_resized = cv2.resize(img2, (target_width, target_height))
 
-                    # Draw SIFT keypoint matches
+                    img1_color = cv2.cvtColor(img1_resized, cv2.COLOR_GRAY2BGR)
+                    img2_color = cv2.cvtColor(img2_resized, cv2.COLOR_GRAY2BGR)
+
+                    result_img = np.vstack((img1_color, img2_color))
+
                     for m in good:
-                        pt1 = (int(kp1[m.queryIdx].pt[0]), int(kp1[m.queryIdx].pt[1]))
-                        pt2 = (int(kp2[m.trainIdx].pt[0]), int(kp2[m.trainIdx].pt[1] + h1))  # shift y by h1
-                        cv2.line(result_img, pt1, pt2, (255, 0, 0))
-
+                        pt1 = (int(kp1[m.queryIdx].pt[0] * target_width / img1.shape[1]),
+                            int(kp1[m.queryIdx].pt[1] * target_height / img1.shape[0]))
+                        pt2 = (int(kp2[m.trainIdx].pt[0] * target_width / img2.shape[1]),
+                            int(kp2[m.trainIdx].pt[1] * target_height / img2.shape[0]) + target_height)
+                        cv2.line(result_img, pt1, pt2, (255, 0, 0), 1)
 
                     self.display_result_image(result_img)
                 else:
                     print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
-        
-                
 
+                # img1 = cv2.imread(self.Image1, cv2.IMREAD_GRAYSCALE)
+                # img2 = cv2.imread(self.Image2, cv2.IMREAD_GRAYSCALE)
+
+                # if img1 is None or img2 is None:
+                #     print("Error loading images.")
+                #     return
+
+                # print(f"img1 shape: {img1.shape}, img2 shape: {img2.shape}")
+                # print(f"img1 min/max: {img1.min()}/{img1.max()}, img2 min/max: {img2.min()}/{img2.max()}")
+                # MIN_MATCH_COUNT = 10
+
+                # start = time.time()
+                # # Compute SIFT keypoints and descriptors
+                # kp1, des1 = pysift.computeKeypointsAndDescriptors(img1)
+                # kp2, des2 = pysift.computeKeypointsAndDescriptors(img2)
+
+                # end = time.time()
+
+                # elapsed_ms = (end - start) * 1000
+                # self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
+
+                # # Initialize and use FLANN
+                # FLANN_INDEX_KDTREE = 0
+                # index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+                # search_params = dict(checks = 50)
+                # flann = cv2.FlannBasedMatcher(index_params, search_params)
+                # matches = flann.knnMatch(des1, des2, k=2)
+
+                # # Lowe's ratio test
+                # good = []
+                # for m, n in matches:
+                #     if m.distance < 0.7 * n.distance:
+                #         good.append(m)
+
+                # if len(good) > MIN_MATCH_COUNT:
+                #     # Estimate homography between template and scene
+                #     src_pts = np.float32([ kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+                #     dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
+
+                #     M = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)[0]
+
+                #     # Draw detected template in scene image
+                #     h, w = img1.shape
+                #     pts = np.float32([[0, 0],
+                #                     [0, h - 1],
+                #                     [w - 1, h - 1],
+                #                     [w - 1, 0]]).reshape(-1, 1, 2)
+                #     dst = cv2.perspectiveTransform(pts, M)
+
+                #     img2 = cv2.polylines(img2, [np.int32(dst)], True, 255, 3, cv2.LINE_AA)
+
+                #     h1, w1 = img1.shape
+                #     h2, w2 = img2.shape
+                #     nWidth = max(w1, w2)
+                #     nHeight = h1 + h2
+                #     result_img = np.zeros((nHeight, nWidth, 3), np.uint8)
+
+                #     for i in range(3):
+                #         result_img[:h1, :w1, i] = img1
+                #         result_img[h1:h1+h2, :w2, i] = img2
+
+                #     # Draw SIFT keypoint matches
+                #     for m in good:
+                #         pt1 = (int(kp1[m.queryIdx].pt[0]), int(kp1[m.queryIdx].pt[1]))
+                #         pt2 = (int(kp2[m.trainIdx].pt[0]), int(kp2[m.trainIdx].pt[1] + h1))  # shift y by h1
+                #         cv2.line(result_img, pt1, pt2, (255, 0, 0))
+
+
+                #     self.display_result_image(result_img)
+                # else:
+                #     print("Not enough matches are found - %d/%d" % (len(good), MIN_MATCH_COUNT))
+        
     def display_result_image(self, result_image):
         if len(result_image.shape) == 2:
             result_image = cv2.cvtColor(result_image, cv2.COLOR_GRAY2RGB)

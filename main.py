@@ -342,7 +342,6 @@ class MainApp(QtWidgets.QMainWindow, ui):
                 self.resultImage.setScaledContents(True) 
             
             case "SSD":
-                # Load images
                 img1 = cv2.imread(self.Image1, cv2.IMREAD_COLOR)  # Main image
                 img2 = cv2.imread(self.Image2, cv2.IMREAD_COLOR)  # Template image
                 
@@ -351,14 +350,13 @@ class MainApp(QtWidgets.QMainWindow, ui):
                     return
                 
                 start = time.time()
-                # Apply custom SSD template matching
+
                 result_image = SSDFeatureMatching.apply_ssd_matching(img1, img2)
                 end = time.time()
                 
-                elapsed_ms = (end - start) * 1000  # Convert to milliseconds
+                elapsed_ms = (end - start) * 1000  
                 self.time_elapsed_label.setText(f"{elapsed_ms:.2f} ms")
                 
-                # Display result
                 self.display_result_image(result_image)
 
             case "SIFT":
